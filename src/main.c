@@ -4,7 +4,7 @@
 
 int main(void) {
     
-    Timer0_Init();
+    Timer0_Init();//test
 
     
     GPIO_Init(LED_BUILTIN, GPIO_OUTPUT);
