@@ -6,25 +6,29 @@
 
 #include "drivers/gpio/gpio.h"
 #include "drivers/timer/timer0.h"
-#include "drivers/adc/adc.h"
 #include "drivers/usart/usart.h"
 #include "drivers/lcd/lcd.h"
 
 #include "pump.h"
+#include "buzzer.h"
+#include "sensors.h"
 
 int main(void)
 {
     Timer0_Init();
-    ADC_Init();
     USART_Init_Default();
     LCD_Init();
 
     Pump_Init();
+    Buzzer_Init();
+    Sensors_Init();
 
     uint32_t last_time = 0;
-    uint16_t adc_value = 0;
 
-    char text[60];
+    uint16_t soil_value = 0;
+    uint16_t water_value = 0;
+
+    char text[64];
     char line[17];
 
     LCD_Clear();
@@ -38,15 +42,34 @@ int main(void)
         {
             last_time = Millis();
 
-            adc_value = ADC_Read(0);
+            soil_value = Sensors_ReadSoil();
+            water_value = Sensors_ReadWater();
 
-            if (adc_value > 580)
+            if (water_value < 300)
+            {
+                Pump_Off();
+                Buzzer_On();
+
+                LCD_SetCursor(0, 0);
+                LCD_Print("NO WATER      ");
+
+                LCD_SetCursor(1, 0);
+                sprintf(line, "Water:%u    ", water_value);
+                LCD_Print(line);
+
+                sprintf(text, "NO WATER %u\r\n", water_value);
+                USART_Transmit(text, strlen(text));
+
+                continue;
+            }
+
+            Buzzer_Off();
+
+            if (soil_value > 580)
                 Pump_On();
 
             LCD_SetCursor(0, 0);
-
-            sprintf(line,"ADC:%u      ",adc_value);
-
+            sprintf(line, "S:%u W:%u ", soil_value, water_value);
             LCD_Print(line);
 
             LCD_SetCursor(1, 0);
@@ -58,9 +81,13 @@ int main(void)
 
             if (Pump_GetState() == 0)
             {
-                sprintf(text,"ADC=%u Pump=%u\r\n",adc_value, Pump_GetState());
+                sprintf(text,
+                        "Soil=%u Water=%u Pump=%u\r\n",
+                        soil_value,
+                        water_value,
+                        Pump_GetState());
 
-                USART_Transmit(text,strlen(text));
+                USART_Transmit(text, strlen(text));
             }
         }
     }
