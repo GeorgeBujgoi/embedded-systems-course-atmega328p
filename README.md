@@ -8,6 +8,7 @@ Proiect realizat folosind ATmega328P pentru monitorizarea umidității solului �
 
 * Citire senzor umiditate sol
 * Citire senzor nivel apă
+* Monitorizare temperatură apă
 * Pornire automată pompă
 * Protecție la lipsa apei
 * Alarmă cu buzzer
@@ -22,12 +23,14 @@ Proiect realizat folosind ATmega328P pentru monitorizarea umidității solului �
 * Pompă apă + releu
 * Senzor umiditate sol
 * Senzor nivel apă
+* Senzor temperatură apă
 * LCD 16x2
 * Buzzer
 * Butoane control
 
 ## Structură proiect
 
+```text
 src/
 ├── main.c
 ├── pump.c
@@ -36,4 +39,10 @@ src/
 ├── buzzer.h
 ├── sensors.c
 └── sensors.h
+
+drivers/lcd/
+├── lcd.c
+└── lcd.h
+```
+
 
