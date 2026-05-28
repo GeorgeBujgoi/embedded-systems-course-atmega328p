@@ -6,5 +6,6 @@
 void Sensors_Init(void);
 uint16_t Sensors_ReadSoil(void);
 uint16_t Sensors_ReadWater(void);
+uint16_t Sensors_ReadTemperature(void);
 
 #endif
