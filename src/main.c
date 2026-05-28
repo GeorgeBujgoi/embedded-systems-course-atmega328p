@@ -122,7 +122,9 @@ int main(void)
                     Pump_Off();
 
                     if (auto_mode)
+                    
                     {
+                        GPIO_Write(GPIO_PORTD, 3, GPIO_HIGH);
                         USART_Transmit("AUTO MODE\r\n", 11);
 
                         LCD_SetCursor(0, 0);
@@ -132,6 +134,7 @@ int main(void)
                     }
                     else
                     {
+                        GPIO_Write(GPIO_PORTD, 3, GPIO_LOW);
                         USART_Transmit("MANUAL MODE\r\n", 13);
 
                         LCD_SetCursor(0, 0);
@@ -176,6 +179,7 @@ int main(void)
 
             soil_value = Sensors_ReadSoil();
             water_value = Sensors_ReadWater();
+            temp_value = Sensors_ReadTemperature();
 
             if (water_value < 300)
             {
