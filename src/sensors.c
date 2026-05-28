@@ -15,3 +15,8 @@ uint16_t Sensors_ReadWater(void)
 {
     return ADC_Read(1);
 }
+
+uint16_t Sensors_ReadTemperature(void)
+{
+    return ADC_Read(2);
+}

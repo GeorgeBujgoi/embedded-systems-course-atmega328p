@@ -39,13 +39,15 @@ int main(void)
 
     GPIO_Init(GPIO_PORTD, 4, GPIO_INPUT); // manual pump
     GPIO_Init(GPIO_PORTD, 5, GPIO_INPUT); // auto/manual switch
-
+    GPIO_Init(GPIO_PORTD, 3, GPIO_OUTPUT);
+    GPIO_Write(GPIO_PORTD, 3, GPIO_HIGH);
     PORTD |= (1 << PD4);
     PORTD |= (1 << PD5);
 
     uint16_t soil_value = 0;
     uint16_t water_value = 0;
 
+    uint16_t temp_value = 0;
     char buffer[64];
     char line[17];
 
@@ -61,7 +63,7 @@ int main(void)
     {
         if (auto_watering == 1)
         {
-            if (Millis() - pump_start_time >= 2000)
+            if (Millis() - pump_start_time >= 1000)
             {
                 Pump_Off();
                 auto_watering = 0;
@@ -120,7 +122,9 @@ int main(void)
                     Pump_Off();
 
                     if (auto_mode)
+                    
                     {
+                        GPIO_Write(GPIO_PORTD, 3, GPIO_HIGH);
                         USART_Transmit("AUTO MODE\r\n", 11);
 
                         LCD_SetCursor(0, 0);
@@ -130,6 +134,7 @@ int main(void)
                     }
                     else
                     {
+                        GPIO_Write(GPIO_PORTD, 3, GPIO_LOW);
                         USART_Transmit("MANUAL MODE\r\n", 13);
 
                         LCD_SetCursor(0, 0);
@@ -174,6 +179,7 @@ int main(void)
 
             soil_value = Sensors_ReadSoil();
             water_value = Sensors_ReadWater();
+            temp_value = Sensors_ReadTemperature();
 
             if (water_value < 300)
             {
