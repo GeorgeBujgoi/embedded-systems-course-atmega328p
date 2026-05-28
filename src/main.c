@@ -201,16 +201,17 @@ int main(void)
                 LCD_SetCursor(1, 0);
                 LCD_Print("AUTO MODE     ");
 
- sprintf(buffer,
-        "Soil=%u Water=%u Pump=%u Mode=%s\r\n",
+sprintf(buffer,
+        "Soil=%u Water=%u Temp=%u Pump=%u Mode=%s\r\n",
         soil_value,
         water_value,
+        temp_value,
         Pump_GetState(),
         auto_mode ? "AUTO" : "MANUAL");
 
                 USART_Transmit(buffer, strlen(buffer));
 
-                if (soil_value > 580)
+                if (soil_value > 850)
                 {
                     Pump_On();
                     auto_watering = 1;
